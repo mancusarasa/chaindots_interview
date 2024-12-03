@@ -3,13 +3,14 @@ from rest_framework import serializers
 from social_media.models import (
     User,
     Post,
+    Following,
 )
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password']
+        fields = ["id", "username", "email", "password"]
         extra_kwargs = {
             "username": {
                 "error_messages": {
@@ -32,11 +33,11 @@ class UserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ['author', 'content', 'creation_date']
+        fields = ["author_id", "content", "creation_date"]
         extra_kwargs = {
-            "author": {
+            "author_id": {
                 "error_messages": {
-                    "required": "Author is required",
+                    "required": "Author_id is required",
                 },
             },
             "content": {
@@ -47,6 +48,24 @@ class PostSerializer(serializers.ModelSerializer):
             "creation_date": {
                 "error_messages": {
                     "required": "Creation date is required",
+                },
+            },
+        }
+
+
+class FollowingSeralizer(serializers.ModelSerializer):
+    class Meta:
+        model = Following
+        fields = ["follower_id", "followed_id"]
+        extra_kwargs = {
+            "follower_id": {
+                "error_messages": {
+                    "required": "Follower_id is required",
+                },
+            },
+            "followed_id": {
+                "error_messages": {
+                    "required": "Followed_id is required",
                 },
             },
         }
