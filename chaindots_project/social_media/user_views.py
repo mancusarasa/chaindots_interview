@@ -26,7 +26,11 @@ class UserDetailsView(
 
     def get_queryset(self):
         return User.objects.annotate(
-            total_posts=Count('post', distinct=True)
+            total_posts=Count("post", distinct=True)
         ).annotate(
-            total_comments=Count('comment', distinct=True)
+            total_comments=Count("comment", distinct=True)
+        ).annotate(
+            total_followers=Count("followers", distinct=True)
+        ).annotate(
+            total_following=Count("following", distinct=True)
         ).all()
