@@ -1,12 +1,20 @@
 from django.urls import path
 
-from social_media.views import (
+from rest_framework.authtoken import views
+
+from social_media.user_views import (
     UserListView,
-    UserDetailsView,
-    PostListView,
+    UserDetailsView
+)
+from social_media.post_views import (
     PostDetailsView,
-    FollowersView,
-    CommentListView,
+    PostListView
+)
+from social_media.followers_views import (
+    FollowersView
+)
+from social_media.comment_views import (
+    CommentListView
 )
 
 urlpatterns = [
@@ -18,6 +26,7 @@ urlpatterns = [
         name='follow-user'
     ),
     path('posts/', PostListView.as_view(), name='posts-list'),
-    path('posts/<int:post_id>/', PostDetailsView.as_view(), name='post-details'),
-    path('posts/<int:post_id>/comments/', CommentListView.as_view(), name='comments-list'),
+    path('posts/<int:pk>/', PostDetailsView.as_view(), name='post-details'),
+    path('posts/<int:pk>/comments/', CommentListView.as_view(), name='comments-list'),
+    path('login/', views.obtain_auth_token),
 ]
