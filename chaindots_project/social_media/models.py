@@ -41,5 +41,13 @@ class Post(models.Model):
 
 class Comment(models.Model):
     author_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post_id = models.ForeignKey(
+        Post,
+        related_name='post_comments',
+        on_delete=models.CASCADE
+    )
     content = models.CharField(max_length=100, blank=False)
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['creation_date']
