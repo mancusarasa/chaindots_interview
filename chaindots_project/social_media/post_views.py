@@ -1,13 +1,16 @@
 from rest_framework import (
     permissions,
     generics,
-    mixins
+    mixins,
+    status
 )
 from django.core.paginator import (
     Paginator,
     EmptyPage
 )
+from django.forms.models import model_to_dict
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 from social_media.models import (
     Post,
@@ -17,11 +20,25 @@ from social_media.serializers import (
 )
 
 
-# FIXME: this is lacking the last three comments included and the information of its creator.
-class PostDetailsView(generics.RetrieveAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (permissions.AllowAny,)
+class PostDetailsView(generics.GenericAPIView):
+
+    def get(self, request, *args, **kwargs):
+        # FIXME: maybe improve this implementation?
+        try:
+            post_id = kwargs['post_id']
+            post = Post.objects.prefetch_related('post_comments').get(id=post_id)
+            comments = post.post_comments.all()[0:3]
+        except Post.DoesNotExist:
+            return Response(
+                {'error': 'post f{post_id} not found!'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        post = model_to_dict(post)
+        comments = [model_to_dict(comment) for comment in comments]
+        return Response(
+            data={**post, 'latest_comments': comments},
+            status=status.HTTP_200_OK
+        )
 
 
 class PostsPagination(PageNumberPagination):
@@ -50,6 +67,5 @@ class PostListView(
         return queryset
 
     def post(self, request, *args, **kwargs):
-        # FIXME: maybe find a way to do this automagically
         request.data['author_id'] = request.user.id
         return self.create(request, *args, **kwargs)
