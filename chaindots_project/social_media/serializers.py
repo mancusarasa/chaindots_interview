@@ -1,16 +1,20 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 
 from social_media.models import (
-    User,
     Post,
     Following,
+    Comment,
 )
 
 
 class UserSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
-        fields = ["id", "username", "email", "password"]
+        fields = ["username", "email", "password"]
         extra_kwargs = {
             "username": {
                 "error_messages": {
@@ -28,6 +32,15 @@ class UserSerializer(serializers.ModelSerializer):
                 },
             },
         }
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+            email=validated_data['email']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -53,7 +66,7 @@ class PostSerializer(serializers.ModelSerializer):
         }
 
 
-class FollowingSeralizer(serializers.ModelSerializer):
+class FollowingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Following
         fields = ["follower_id", "followed_id"]
@@ -66,6 +79,29 @@ class FollowingSeralizer(serializers.ModelSerializer):
             "followed_id": {
                 "error_messages": {
                     "required": "Followed_id is required",
+                },
+            },
+        }
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ["author_id", "post_id", "content"]
+        extra_kwargs = {
+            "author_id": {
+                "error_messages": {
+                    "required": "author_id is required",
+                },
+            },
+            "post_id": {
+                "error_messages": {
+                    "required": "Followed_id is required",
+                },
+            },
+            "content": {
+                "error_messages": {
+                    "required": "content is required",
                 },
             },
         }
