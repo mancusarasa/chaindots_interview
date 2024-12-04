@@ -29,13 +29,19 @@ This is the interview exercise for Chaindots.
 
 `curl -H "Content-type: application/json" -X POST -d '{"username": "user1", "email": "user1@hotmail.com", "password": "pass1"}' localhost:8000/api/users/`
 
+2. Login with the new user:
+
+`export TOKEN=$(curl -H "Content-type: application/json" -X POST -d '{"username": "user1", "password": "pass1"}' "localhost:8000/api/login/" | jq -r '.token')`
+
+This token will be useful to validate all the requests below, through the `Authorization: Token` header.
+
 3. Retrieve details of a specific user. Including number of total posts, number of total comments, followers and following:
 
-`curl -H "Content-type: application/json" -X GET localhost:8000/api/users/1/`
+`curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X GET localhost:8000/api/users/1/`
 
 4. Create a new post
 
-`curl -H "Content-type: application/json" -d '{"author_id": 1, "content": "a post"}' -X POST localhost:8000/api/posts/`
+`curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -d '{"author_id": 1, "content": "a post"}' -X POST localhost:8000/api/posts/`
 
 5. Set first id user as follower of second id user
 
@@ -43,7 +49,7 @@ This is the interview exercise for Chaindots.
 
 6. Retrieve a list of all posts ordered from newest to oldest from all users, with pagination and filters. The filters to implement are: author_id, from_date, to_date. None of the filters is compulsory. The pagination should be achieved with the following parameters: page_size (default = 20), page_number (default = 1):
 
-`curl -H "Content-type: application/json" -X GET "localhost:8000/api/posts/?page_size=5&page_number=1/"`
+`curl -H "Content-type: application/json" -X GET "localhost:8000/api/posts/?page_size=5&page_number=1"`
 
 7. Add a new comment to a post:
 
