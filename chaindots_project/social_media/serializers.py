@@ -35,10 +35,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create(
-            username=validated_data['username'],
-            email=validated_data['email']
+            username=validated_data["username"],
+            email=validated_data["email"]
         )
-        user.set_password(validated_data['password'])
+        user.set_password(validated_data["password"])
         user.save()
         return user
 
@@ -47,10 +47,19 @@ class UserExtraInfoSerializer(UserSerializer):
 
     total_posts = serializers.IntegerField()
     total_comments = serializers.IntegerField()
+    total_followers = serializers.IntegerField()
+    total_following = serializers.IntegerField()
 
     class Meta:
         model = User
-        fields = ["username", "email", "total_posts", "total_comments"]
+        fields = [
+            "username",
+            "email",
+            "total_posts",
+            "total_comments",
+            "total_followers",
+            "total_following",
+        ]
 
 
 class PostSerializer(serializers.ModelSerializer):

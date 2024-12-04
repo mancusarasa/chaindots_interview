@@ -25,25 +25,28 @@ class PostDetailsView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         # FIXME: maybe improve this implementation?
         try:
-            post_id = kwargs['post_id']
-            post = Post.objects.prefetch_related('post_comments').get(id=post_id)
+            post_id = kwargs["post_id"]
+            post = Post.objects.prefetch_related("post_comments").get(id=post_id)
             comments = post.post_comments.all()[0:3]
         except Post.DoesNotExist:
             return Response(
-                {'error': 'post f{post_id} not found!'},
+                {"error": "post f{post_id} not found!"},
                 status=status.HTTP_404_NOT_FOUND
             )
         post = model_to_dict(post)
         comments = [model_to_dict(comment) for comment in comments]
         return Response(
-            data={**post, 'latest_comments': comments},
+            data={
+                **post,
+                "latest_comments": comments
+            },
             status=status.HTTP_200_OK
         )
 
 
 class PostsPagination(PageNumberPagination):
     page_size = 20
-    page_size_query_param = 'page_size'
+    page_size_query_param = "page_size"
 
 
 class PostListView(
@@ -55,17 +58,17 @@ class PostListView(
 
     def get_queryset(self):
         queryset = Post.objects.all()
-        author_id = self.request.query_params.get('author_id')
+        author_id = self.request.query_params.get("author_id")
         if author_id is not None:
             queryset = queryset.filter(author_id=author_id)
-        from_date = self.request.query_params.get('from_date')
+        from_date = self.request.query_params.get("from_date")
         if from_date is not None:
             queryset = queryset.filter(creation_date__gt=from_date)
-        to_date = self.request.query_params.get('to_date')
+        to_date = self.request.query_params.get("to_date")
         if to_date is not None:
             queryset = queryset.filter(creation_date__lt=to_date)
         return queryset
 
     def post(self, request, *args, **kwargs):
-        request.data['author_id'] = request.user.id
+        request.data["author_id"] = request.user.id
         return self.create(request, *args, **kwargs)

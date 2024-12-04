@@ -19,14 +19,14 @@ class CommentListView(
     mixins.CreateModelMixin,
 ):
     serializer_class = CommentSerializer
-    lookup_field = 'post_id'
+    lookup_field = "post_id"
 
     def get_queryset(self):
-        post_id = self.kwargs['post_id']
+        post_id = self.kwargs["post_id"]
         queryset = Comment.objects.all().filter(post_id=post_id)
         return queryset
 
     def post(self, request, *args, **kwargs):
-        request.data['author_id'] = request.user.id
-        request.data['post_id'] = kwargs['post_id']
+        request.data["author_id"] = request.user.id
+        request.data["post_id"] = kwargs["post_id"]
         return self.create(request, *args, **kwargs)
