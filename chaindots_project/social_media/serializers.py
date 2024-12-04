@@ -43,6 +43,16 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+class UserExtraInfoSerializer(UserSerializer):
+
+    total_posts = serializers.IntegerField()
+    total_comments = serializers.IntegerField()
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "total_posts", "total_comments"]
+
+
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
