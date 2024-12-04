@@ -10,14 +10,9 @@ This is the interview exercise for Chaindots.
 4. POST /api/posts/: Create a new post. (X)
 5. POST /api/users/{id}/follow/{id}: Set first id user as follower of second id user. (X)
 6. GET /api/posts/: Retrieve a list of all posts ordered from newest to oldest from all users, with pagination and filters. The filters to implement are: author_id, from_date, to_date. None of the filters is compulsory. The pagination should be achieved with the following parameters: page_size (default = 20), page_number (default = 1) (X)
-7. POST /api/posts/{id}/comments/: Add a new comment to a post.
-8. GET /api/posts/{id}/comments/: Retrieve all comments for a specific post.
+7. POST /api/posts/{id}/comments/: Add a new comment to a post. (X)
+8. GET /api/posts/{id}/comments/: Retrieve all comments for a specific post. (X)
 9. GET /api/posts/{id}/: Retrieve details of a specific post with its' last three comments included and the information of its creator.
-
-# Next steps:
-
-- Start using django rest auth tokens.
-- Implement authentication on relevant endpoints using tokens.
 
 # Commands:
 
