@@ -27,7 +27,6 @@ class CommentListView(
         return queryset
 
     def post(self, request, *args, **kwargs):
-        # FIXME: maybe find a way to do this automagically
         request.data['author_id'] = request.user.id
         request.data['post_id'] = kwargs['post_id']
         return self.create(request, *args, **kwargs)
