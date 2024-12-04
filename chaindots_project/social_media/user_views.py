@@ -9,14 +9,16 @@ from social_media.serializers import (
 )
 
 class UserListView(
-    generics.ListAPIView,
-    generics.CreateAPIView
+    generics.CreateAPIView,
+    generics.ListAPIView
 ):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
 
 
-class UserDetailsView(generics.RetrieveAPIView):
+class UserDetailsView(
+    generics.RetrieveAPIView
+):
     queryset = User.objects.all()
     serializer_class = UserSerializer

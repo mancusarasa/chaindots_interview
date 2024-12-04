@@ -31,26 +31,24 @@ class PostsPagination(PageNumberPagination):
 
 
 class PostListView(
-    mixins.CreateModelMixin,
-    generics.GenericAPIView
+    generics.ListAPIView,
+    mixins.CreateModelMixin
 ):
-    queryset = Post.objects.all()
     serializer_class = PostSerializer
+    pagination_class = PostsPagination
 
-    def get(self, request, *args, **kwargs):
-        author_id = request.GET.get('author_id', None)
-        posts = Post.objects.filter(author_id=author_id) if author_id else Post.objects.all()
-        page_size = request.GET.get('page_size', 20)
-        page_number = request.GET.get('page_number', 1)
-        paginator = Paginator(posts, page_size)
-        try:
-            page = paginator.page(page_number)
-            serializer = PostSerializer(page.object_list, many=True)
-            data = [post for post in serializer.data]
-        except EmptyPage:
-            data = []
-        response = data
-        return Response(response, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        queryset = Post.objects.all()
+        author_id = self.request.query_params.get('author_id')
+        if author_id is not None:
+            queryset = queryset.filter(author_id=author_id)
+        from_date = self.request.query_params.get('from_date')
+        if from_date is not None:
+            queryset = queryset.filter(creation_date__gt=from_date)
+        to_date = self.request.query_params.get('to_date')
+        if to_date is not None:
+            queryset = queryset.filter(creation_date__lt=to_date)
+        return queryset
 
     def post(self, request, *args, **kwargs):
         # FIXME: maybe find a way to do this automagically
