@@ -65,7 +65,7 @@ class UserExtraInfoSerializer(UserSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ["author_id", "content", "creation_date"]
+        fields = ["id", "author_id", "content", "creation_date"]
         extra_kwargs = {
             "author_id": {
                 "error_messages": {
