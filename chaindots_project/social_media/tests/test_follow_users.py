@@ -12,7 +12,7 @@ from rest_framework.test import APITestCase
 class TestFollowUsers(APITestCase):
     def test_following_users_summarizes_total_followers(self):
         users_count = 10
-        users = [self._create_user(i) for i in range(users_count)]
+        users = [self._create_user(i+1) for i in range(users_count)]
         # login as user 1
         token = self._login("user1", "pass1")
         # make user 1 follow 3 users
