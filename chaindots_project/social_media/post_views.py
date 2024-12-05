@@ -16,7 +16,8 @@ from social_media.models import (
     Post,
 )
 from social_media.serializers import (
-    PostSerializer
+    PostSerializer,
+    UserSerializer
 )
 
 
@@ -33,12 +34,14 @@ class PostDetailsView(generics.GenericAPIView):
                 {"error": "post f{post_id} not found!"},
                 status=status.HTTP_404_NOT_FOUND
             )
+        user_serializer = UserSerializer(post.author_id)
         post = model_to_dict(post)
         comments = [model_to_dict(comment) for comment in comments]
         return Response(
             data={
                 **post,
-                "latest_comments": comments
+                "latest_comments": comments,
+                "author_info": user_serializer.data
             },
             status=status.HTTP_200_OK
         )

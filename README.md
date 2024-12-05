@@ -12,7 +12,7 @@ This is the interview exercise for Chaindots.
 6. GET /api/posts/: Retrieve a list of all posts ordered from newest to oldest from all users, with pagination and filters. The filters to implement are: author_id, from_date, to_date. None of the filters is compulsory. The pagination should be achieved with the following parameters: page_size (default = 20), page_number (default = 1) (X)
 7. POST /api/posts/{id}/comments/: Add a new comment to a post. (X)
 8. GET /api/posts/{id}/comments/: Retrieve all comments for a specific post. (X)
-9. GET /api/posts/{id}/: Retrieve details of a specific post with its' last three comments included and the information of its creator.
+9. GET /api/posts/{id}/: Retrieve details of a specific post with its' last three comments included and the information of its creator. (X)
 
 # How to use the API
 
@@ -34,7 +34,7 @@ curl -H "Content-type: application/json" -X POST -d '{"username": "user1", "emai
 export TOKEN=$(curl -H "Content-type: application/json" -X POST -d '{"username": "user1", "password": "pass1"}' "localhost:8000/api/login/" | jq -r '.token')
 ```
 
-This token will be useful to validate all the requests below, through the Authorization: Token header.
+This token will be useful to validate all the requests below, through the `Authorization: Token` header.
 
 3. Retrieve details of a specific user. Including number of total posts, number of total comments, followers and following:
 
