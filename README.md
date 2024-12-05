@@ -71,3 +71,38 @@ curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X POS
 ```shell
 curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X GET localhost:8000/api/posts/1/comments/
 ```
+
+# Usage example
+
+```shell
+
+# Create 9 users:
+curl -H "Content-type: application/json" -X POST -d '{"username": "user1", "email": "user1@hotmail.com", "password": "pass1"}' localhost:8000/api/users/
+curl -H "Content-type: application/json" -X POST -d '{"username": "user2", "email": "user2@hotmail.com", "password": "pass2"}' localhost:8000/api/users/
+curl -H "Content-type: application/json" -X POST -d '{"username": "user3", "email": "user3@hotmail.com", "password": "pass3"}' localhost:8000/api/users/
+curl -H "Content-type: application/json" -X POST -d '{"username": "user4", "email": "user4@hotmail.com", "password": "pass4"}' localhost:8000/api/users/
+curl -H "Content-type: application/json" -X POST -d '{"username": "user5", "email": "user5@hotmail.com", "password": "pass5"}' localhost:8000/api/users/
+curl -H "Content-type: application/json" -X POST -d '{"username": "user6", "email": "user6@hotmail.com", "password": "pass6"}' localhost:8000/api/users/
+curl -H "Content-type: application/json" -X POST -d '{"username": "user7", "email": "user7@hotmail.com", "password": "pass7"}' localhost:8000/api/users/
+curl -H "Content-type: application/json" -X POST -d '{"username": "user8", "email": "user8@hotmail.com", "password": "pass8"}' localhost:8000/api/users/
+curl -H "Content-type: application/json" -X POST -d '{"username": "user9", "email": "user9@hotmail.com", "password": "pass9"}' localhost:8000/api/users/
+
+# Login with user1
+export TOKEN=$(curl -H "Content-type: application/json" -X POST -d '{"username": "user1", "password": "pass1"}' "localhost:8000/api/login/" | jq -r '.token')
+
+# Make user1 follow 3 users:
+curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X POST localhost:8000/api/users/1/follow/2/
+curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X POST localhost:8000/api/users/1/follow/3/
+curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X POST localhost:8000/api/users/1/follow/4/
+
+# Make user6 and user7 follow user1:
+curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X POST localhost:8000/api/users/4/follow/1/
+curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X POST localhost:8000/api/users/5/follow/1/
+
+# Create two posts with user1:
+curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -d '{"content": "post 1"}' -X POST localhost:8000/api/posts/
+curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -d '{"content": "post 2"}' -X POST localhost:8000/api/posts/
+
+# Check the amount of posts, followers/following of user1
+curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X GET localhost:8000/api/users/1/
+```
