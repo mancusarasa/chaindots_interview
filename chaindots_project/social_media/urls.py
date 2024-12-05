@@ -28,5 +28,5 @@ urlpatterns = [
     path("posts/", PostListView.as_view(), name="posts-list"),
     path("posts/<int:post_id>/", PostDetailsView.as_view(), name="post-details"),
     path("posts/<int:post_id>/comments/", CommentListView.as_view(), name="comments-list"),
-    path("login/", views.obtain_auth_token),
+    path("login/", views.obtain_auth_token, name="login"),
 ]
