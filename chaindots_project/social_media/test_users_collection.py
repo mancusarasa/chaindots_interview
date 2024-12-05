@@ -45,14 +45,30 @@ class TestUserCollection(APITestCase):
             },
             ignore_fields=["password"]
         )
-        response = self.client.post(
-            reverse("login"),
-            {
-                "username": "user1",
-                "password": "pass1",
-            }
-        )
+        response = self._login("user1", "pass1")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_details_returns_totals_in_zero(self):
+        new_user = self._assert_user_is_created_correctly({
+            "username": "user1",
+            "email": "user1@hotmail.com",
+            "password": "pass1",
+        }, ignore_fields=["password"])
+        response = self._login("user1", "pass1")
+        token = response.data["token"]
+        user_details = self.client.get(
+            reverse(
+                "user-details",
+                kwargs={'pk': new_user["id"]}
+            ),
+            headers={"Authorization": f"Token {token}"}
+        ).data
+        self.assertEqual(user_details["username"], new_user["username"])
+        self.assertEqual(user_details["email"], new_user["email"])
+        self.assertEqual(user_details["total_posts"], 0)
+        self.assertEqual(user_details["total_comments"], 0)
+        self.assertEqual(user_details["total_followers"], 0)
+        self.assertEqual(user_details["total_following"], 0)
 
     def _assert_user_is_created_correctly(
         self,
@@ -66,3 +82,12 @@ class TestUserCollection(APITestCase):
             if field not in ignore_fields:
                 self.assertEqual(user[field], value)
         return user
+
+    def _login(self, username: str, password: str):
+        return self.client.post(
+            reverse("login"),
+            {
+                "username": username,
+                "password": password,
+            }
+        )
