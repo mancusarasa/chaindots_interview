@@ -39,6 +39,12 @@ class TestPostsDetails(APITestCase):
             "comment 5"
         )
         fetched_post = self._fetch_post(post["id"], token_one)
+        latest_comments = fetched_post["latest_comments"]
+        self.assertEqual(len(latest_comments), 3)
+        # assert comments correspond to the latest three (5-4-3)
+        self.assertEqual(latest_comments[0]["author_id"], user_five["id"])
+        self.assertEqual(latest_comments[1]["author_id"], user_four["id"])
+        self.assertEqual(latest_comments[2]["author_id"], user_three["id"])
 
     def _login(self, username: str, password: str):
         return self.client.post(
@@ -93,5 +99,6 @@ class TestPostsDetails(APITestCase):
         return self.client.post(
             reverse("comments-list", kwargs={'post_id': post_id}),
             {"content": "comment"},
+            headers={"Authorization": f"Token {token}"},
             format="json"
         )

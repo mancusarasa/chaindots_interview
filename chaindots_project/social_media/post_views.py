@@ -28,7 +28,7 @@ class PostDetailsView(generics.GenericAPIView):
         try:
             post_id = kwargs["post_id"]
             post = Post.objects.prefetch_related("post_comments").get(id=post_id)
-            comments = post.post_comments.all()[0:3]
+            comments = post.post_comments.all().order_by("-creation_date")[0:3]
         except Post.DoesNotExist:
             return Response(
                 {"error": "post f{post_id} not found!"},
