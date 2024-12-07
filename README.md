@@ -106,3 +106,7 @@ curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -d '{"
 # Check the amount of posts, followers/following of user1
 curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X GET localhost:8000/api/users/1/
 ```
+
+# Pending tests
+
+I could have done some more tests that included more combinations of pagination settings, and also play around with disabling the `author_id` field. However, I feel I provided enought unit tests to assert that the presented API behaves like it was specified.
