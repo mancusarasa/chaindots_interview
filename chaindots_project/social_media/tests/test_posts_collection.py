@@ -4,6 +4,7 @@ from typing import (
     Any,
     Optional,
 )
+from datetime import datetime
 
 from django.urls import reverse
 from rest_framework import status
@@ -71,6 +72,35 @@ class TestPostsCollection(APITestCase):
         expected_posts_ids = set(i for i in range(31, 41))
         self.assertEqual(posts_ids, expected_posts_ids)
 
+    def test_searching_in_date_ranges(self):
+        posts_count = 50
+        user = self._create_user(1)
+        token = self._login("user1", "pass1")
+        posts = [self._create_post(f"Post {index}", token) for index in range(posts_count)]
+        middle_date = posts[25]["creation_date"]
+        first_half = self._fetch_posts(
+            token,
+            author_id=None,
+            page_size=50,
+            page=1,
+            from_date=None,
+            to_date=middle_date
+        )["results"]
+        posts_ids = set(post["id"] for post in first_half)
+        expected_post_ids = set(range(1, 27))
+        self.assertEqual(posts_ids, expected_post_ids)
+        second_half = self._fetch_posts(
+            token,
+            author_id=None,
+            page_size=50,
+            page=1,
+            from_date=middle_date,
+            to_date=None
+        )["results"]
+        posts_ids = set(post["id"] for post in second_half)
+        expected_post_ids = set(range(26, 51))
+        self.assertEqual(posts_ids, expected_post_ids)
+
     def _login(self, username: str, password: str):
         return self.client.post(
             reverse("login"),
@@ -113,7 +143,9 @@ class TestPostsCollection(APITestCase):
         token: str,
         author_id: Optional[int] = None,
         page_size: int = 20,
-        page: int = 1
+        page: int = 1,
+        from_date: Optional[datetime] = None,
+        to_date: Optional[datetime] = None
     ) -> List[Dict]:
         data = {
             "page_size": page_size,
@@ -121,6 +153,10 @@ class TestPostsCollection(APITestCase):
         }
         if author_id is not None:
             data["author_id"] = author_id
+        if from_date is not None:
+            data["from_date"] = from_date
+        if to_date is not None:
+            data["to_date"] = to_date
         return self.client.get(
             reverse(
                 'posts-list',
