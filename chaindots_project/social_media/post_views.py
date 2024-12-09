@@ -66,10 +66,10 @@ class PostListView(
             queryset = queryset.filter(author_id=author_id)
         from_date = self.request.query_params.get("from_date")
         if from_date is not None:
-            queryset = queryset.filter(creation_date__gt=from_date)
+            queryset = queryset.filter(creation_date__gte=from_date)
         to_date = self.request.query_params.get("to_date")
         if to_date is not None:
-            queryset = queryset.filter(creation_date__lt=to_date)
+            queryset = queryset.filter(creation_date__lte=to_date)
         return queryset
 
     def post(self, request, *args, **kwargs):
