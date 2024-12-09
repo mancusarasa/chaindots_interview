@@ -109,10 +109,19 @@ curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X GET
 
 # How to run the automated test suite
 
-In order to run the unit tests, run the following commands
+In order to run the unit tests, run the following commands:
 
 ```
 cd chaindots_project
 python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py test
 ```
 
+# Notes on the optimizations applied to ORM queries
+
+The most important thing to note regarding this topic is the use of `prefetch_related` when accessing objects related through a `ForeignKey`. For the purposes of this exercise, this optimization was necessary for the logic that retrieves comments associated to a given post, which can be seen in `PostDetailsView::get`:
+
+```python
+post = Post.objects.prefetch_related("post_comments").get(id=post_id)
+```
+
+This call to `prefetch_related` will solve the `N+1` problem when accessing the database through Django's ORM layer.
