@@ -4,15 +4,15 @@ This is the interview exercise for Chaindots.
 
 # Endpoints
 
-1. GET /api/users/: Retrieve a list of all users. (X)
-2. POST /api/users/: Create a new user. (X)
-3. GET /api/users/{id}/: Retrieve details of a specific user. Including number of total posts, number of total comments, followers and following. (X)
-4. POST /api/posts/: Create a new post. (X)
-5. POST /api/users/{id}/follow/{id}: Set first id user as follower of second id user. (X)
-6. GET /api/posts/: Retrieve a list of all posts ordered from newest to oldest from all users, with pagination and filters. The filters to implement are: author_id, from_date, to_date. None of the filters is compulsory. The pagination should be achieved with the following parameters: page_size (default = 20), page_number (default = 1) (X)
-7. POST /api/posts/{id}/comments/: Add a new comment to a post. (X)
-8. GET /api/posts/{id}/comments/: Retrieve all comments for a specific post. (X)
-9. GET /api/posts/{id}/: Retrieve details of a specific post with its' last three comments included and the information of its creator. (X)
+1. GET /api/users/: Retrieve a list of all users.
+2. POST /api/users/: Create a new user.
+3. GET /api/users/{id}/: Retrieve details of a specific user. Including number of total posts, number of total comments, followers and following.
+4. POST /api/posts/: Create a new post.
+5. POST /api/users/{id}/follow/{id}: Set first id user as follower of second id user.
+6. GET /api/posts/: Retrieve a list of all posts ordered from newest to oldest from all users, with pagination and filters. The filters to implement are: author_id, from_date, to_date. None of the filters is compulsory. The pagination should be achieved with the following parameters: page_size (default = 20), page_number (default = 1)
+7. POST /api/posts/{id}/comments/: Add a new comment to a post.
+8. GET /api/posts/{id}/comments/: Retrieve all comments for a specific post.
+9. GET /api/posts/{id}/: Retrieve details of a specific post with its' last three comments included and the information of its creator.
 
 # How to use the API
 
@@ -107,6 +107,12 @@ curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -d '{"
 curl -H "Content-type: application/json" -H "Authorization: Token $TOKEN" -X GET localhost:8000/api/users/1/
 ```
 
-# Pending tests
+# How to run the automated test suite
 
-I could have done some more tests that included more combinations of pagination settings, and also play around with disabling the `author_id` field. However, I feel I provided enought unit tests to assert that the presented API behaves like it was specified.
+In order to run the unit tests, run the following commands
+
+```
+cd chaindots_project
+python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py test
+```
+
