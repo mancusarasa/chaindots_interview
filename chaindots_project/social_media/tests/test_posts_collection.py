@@ -47,6 +47,29 @@ class TestPostsCollection(APITestCase):
             author_id = index + 1
             self.assertEqual(post["author_id"], author_id)
             self.assertEqual(post["content"], f"user{author_id} says: Hi!")
+    
+    def test_play_around_with_pagination_options(self):
+        posts_count = 50
+        user = self._create_user(1)
+        token = self._login("user1", "pass1")
+        for index in range(posts_count):
+            self._create_post(f"Post {index}", token)
+        # fetch using default pagination options (page = 1, page_size=20)
+        posts = self._fetch_posts(token)["results"]
+        self.assertEqual(len(posts), 20)
+        posts_ids = set(post["id"] for post in posts)
+        expected_posts_ids = set(i+1 for i in range(20))
+        self.assertEqual(posts_ids, expected_posts_ids)
+        # fetch using page_size=10, page=4
+        posts = self._fetch_posts(
+            token,
+            author_id=None,
+            page_size=10,
+            page=4
+        )["results"]
+        posts_ids = set(post["id"] for post in posts)
+        expected_posts_ids = set(i for i in range(31, 41))
+        self.assertEqual(posts_ids, expected_posts_ids)
 
     def _login(self, username: str, password: str):
         return self.client.post(
@@ -67,7 +90,7 @@ class TestPostsCollection(APITestCase):
             }
         ).data
 
-    def _create_post(self, post_content: int, token: str) -> Dict[str, Any]:
+    def _create_post(self, post_content: str, token: str) -> Dict[str, Any]:
         response = self.client.post(
             reverse('posts-list'),
             { "content": post_content },
@@ -85,8 +108,17 @@ class TestPostsCollection(APITestCase):
             headers={"Authorization": f"Token {token}"}
         ).data
 
-    def _fetch_posts(self, token: str, author_id: Optional[int] = None) -> List[Dict]:
-        data = {}
+    def _fetch_posts(
+        self,
+        token: str,
+        author_id: Optional[int] = None,
+        page_size: int = 20,
+        page: int = 1
+    ) -> List[Dict]:
+        data = {
+            "page_size": page_size,
+            "page": page,
+        }
         if author_id is not None:
             data["author_id"] = author_id
         return self.client.get(
